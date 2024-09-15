@@ -17,10 +17,7 @@ class Book(models.Model):
 
 class CopyStatus(models.TextChoices):
     AVAILABLE = 'Available', 'Available'
-    CHECKED_OUT = 'Checked Out', 'Checked Out'
-    UNDER_REPAIR = 'Under Repair', 'Under Repair'
-    LOST = 'Lost', 'Lost'
-
+    CHECKED_OUT = 'Borrowed', 'Borrowed'
 
 class Copies(models.Model):
     book = models.ForeignKey(Book, verbose_name="Book", on_delete=models.CASCADE)
