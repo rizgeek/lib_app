@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # custom app
     'lib_app',
+    'books'
 ]
 
 MIDDLEWARE = [
