@@ -5,11 +5,14 @@ from books.models import Copies, CopyStatus
 from collections import Counter
 from books_transactions.models import Histories
 from django.contrib.auth.models import User
+from lib_users.permissions import IsInGroup
 
 
 class BorrowBook :
 
     def borrow_books(self, request):
+        IsInGroup.check_access(request, self, 'librarian')
+
         copies_ids = request.data.get('copies_ids')
         email = request.data.get('email')
 

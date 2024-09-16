@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 
 class FlagTransaction(models.TextChoices):
-    not_active = 'Not Active'
+    returned = 'Returned'
     active = 'Active'
     
 class Histories(models.Model):
@@ -13,6 +13,7 @@ class Histories(models.Model):
     status = models.CharField(max_length=20, choices=FlagTransaction.choices, default=FlagTransaction.active)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+    action_date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         if self.start_date is None:

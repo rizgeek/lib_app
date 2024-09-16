@@ -1,6 +1,6 @@
 from django.urls import path
-from books_transactions.api.views.borrowed import Borrowed
+from books_transactions.api.views.transactions import BooksTransaction
 
 urlpatterns = [
-    path('transaction/<str:action>', Borrowed.as_view(), name='Transaction Borrowed'),
+    path('transaction/<str:action>', BooksTransaction.as_view(), name='Books Transactions'),
 ]
