@@ -1,19 +1,18 @@
 from lib_users.permissions import IsInGroup
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from lib_users.api.serializers.user import UserSerializer
 from rest_framework.response import Response
+from rest_framework import status
+
 
 
 class UserController :
-    def _check_access(self, request, *access) -> None:
-        check = IsInGroup(*access).has_permission(request, self)
-        if not check :
-            raise PermissionDenied("You do not have permission to access this resource.")
-        
-    
+
+    permission_classes = [IsAuthenticated]
+
     def profile(self, request):
-        self._check_access(request, 'librarian', 'student')
+        IsInGroup.check_access(request, self, 'librarian', 'student')
                 
         email = request.user
         try:
