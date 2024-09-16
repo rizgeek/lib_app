@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from books.models import Copies, CopyStatus
 from collections import Counter
-from books_transactions.models import Histories
+from books_transactions.models import Histories, FlagTransaction
 from django.contrib.auth.models import User
 from lib_users.permissions import IsInGroup
 
@@ -89,6 +89,7 @@ class BorrowBook :
 
         borrowed_books_count = Histories.objects.filter(
             user=user,
+            status=FlagTransaction.active,
             start_date__gte=thirty_days_ago
         ).count()
         return (borrowed_books_count + len(new_copies_ids)) <= 10

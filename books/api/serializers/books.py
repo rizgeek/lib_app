@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from books.models import Book, Copies, CopyStatus
+from books_transactions.models import Histories, FlagTransaction
+from django.utils.timezone import now
 
 class BookSerializer(serializers.ModelSerializer):
     copies = serializers.SerializerMethodField()
@@ -25,12 +27,29 @@ class BookSerializer(serializers.ModelSerializer):
     
     def get_borrowable_status(self, obj):
         copies_count = self.get_copies(obj)
-        return 'Now' if copies_count > 1 else 'Not Now'
+
+        if copies_count > 0:
+            return 'Now'
+        
+        active_histories = Histories.objects.filter(
+            book_copies__book=obj, 
+            status=FlagTransaction.active,
+            end_date__gte=now()
+        ).order_by('end_date')
+
+        if active_histories.exists():
+            closest_end_date = active_histories.first().end_date
+            return f'Next available on {closest_end_date.strftime("%Y-%m-%d")}'
+        
+        return 'Out off stock'
+
 
 
 class CopiesSerializer(serializers.ModelSerializer):
-    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
+    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all(), write_only=True)
+    
+    book_details = BookSerializer(source='book', read_only=True)
 
     class Meta:
         model = Copies
-        fields = ['book', 'status']
+        fields = ['id', 'book', 'status', 'book_details']

@@ -1,9 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
-from books.models import Copies, CopyStatus
-from collections import Counter
+from books.models import CopyStatus
 from books_transactions.models import Histories, FlagTransaction
-from django.contrib.auth.models import User
 from books_transactions.api.controller.borrowed import BorrowBook
 from lib_users.permissions import IsInGroup
 
