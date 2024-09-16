@@ -3,16 +3,21 @@ from books.models import Book, Copies, CopyStatus
 
 class BookSerializer(serializers.ModelSerializer):
     copies = serializers.SerializerMethodField()
+    copies_ids = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     borrowable_status = serializers.SerializerMethodField()
     
 
     class Meta:
         model = Book
-        fields = ['isbn', 'title', 'author', 'publisher', 'edition', 'status', 'copies', 'borrowable_status']
+        fields = ['isbn', 'title', 'author', 'publisher', 'edition', 'status', 'copies','copies_ids' ,'borrowable_status']
 
     def get_copies(self, obj):
         return Copies.objects.filter(book=obj, status=CopyStatus.AVAILABLE).count()
+
+    def get_copies_ids(self, obj):
+        # Fetch IDs of all copies for the book
+        return Copies.objects.filter(book=obj, status=CopyStatus.AVAILABLE).values_list('id', flat=True)
     
     def get_status(self, obj):
         copies_count = self.get_copies(obj)

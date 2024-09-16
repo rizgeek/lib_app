@@ -1,14 +1,12 @@
 from django.db import models
 from books.models import Copies
 from django.contrib.auth.models import User
-from datetime import timedelta
-
+from datetime import datetime, timedelta
 
 class FlagTransaction(models.TextChoices):
-    not_active = 0, 0
-    active = 1, 1
+    not_active = 'Not Active'
+    active = 'Active'
     
-
 class Histories(models.Model):
     book_copies = models.ForeignKey(Copies, verbose_name="BookCopies", on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
@@ -17,6 +15,10 @@ class Histories(models.Model):
     end_date = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        if self.start_date is None:
+            self.start_date = datetime.now()
+
         if not self.end_date:
             self.end_date = self.start_date + timedelta(days=30)
+            
         super().save(*args, **kwargs)
