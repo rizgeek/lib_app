@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from books_transactions.api.controller.borrowed import BorrowBook
 from books_transactions.api.controller.returned import ReturnedBook
-from books_transactions.api.controller.transaction_student import TransactionStudent
+from books_transactions.api.controller.histories import HistoriesBook
 
 
 
@@ -14,6 +14,7 @@ class BooksTransaction(APIView):
     def __init__(self) -> None:
         self.borrowed = BorrowBook()
         self.returned = ReturnedBook()
+        self.histories = HistoriesBook()
 
 
     def post(self, request, action):
@@ -26,6 +27,17 @@ class BooksTransaction(APIView):
                 return Response({
                     'message' : 'action not found'
                 }, status=status.HTTP_404_NOT_FOUND)
+            
+    
+    def get(self, request, action):
+        match action :
+            case 'histories' :
+                return self.histories.get_history(request)
+            case _ :
+                return Response({
+                    'message' : 'action not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+
 
 
 
